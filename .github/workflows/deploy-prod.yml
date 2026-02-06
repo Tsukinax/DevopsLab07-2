@@ -4,6 +4,7 @@ on:
     branches:
       - prod  # สั่งให้ทำงานเมื่อมีคน Push เข้า branch 'prod'
       
+      
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
