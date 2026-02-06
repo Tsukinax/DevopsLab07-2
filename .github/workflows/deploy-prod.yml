@@ -38,8 +38,9 @@ jobs:
       - name: set the root user back as the owner
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.PROD_HOST }}  # ใช้ IP เครื่อง Prod
+          host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.SSH_USER_NAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo chown -R root /var/www/html
+            sudo chmod -R 755 /var/www/html   # <--- เพิ่มบรรทัดนี้ครับ สำคัญมาก!
