@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - Prod  # สั่งให้ทำงานเมื่อมีคน Push เข้า branch 'prod'
-      
 
 jobs:
   deploy-app:
