@@ -2,9 +2,9 @@ name: deploy on push production branch
 on:
   push:
     branches:
-      - prod  # สั่งให้ทำงานเมื่อมีคน Push เข้า branch 'prod'
+      - Prod  # สั่งให้ทำงานเมื่อมีคน Push เข้า branch 'prod'
       
-      
+
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
