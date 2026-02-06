@@ -1,0 +1,45 @@
+name: deploy on push production branch
+on:
+  push:
+    branches:
+      - Prod  # สั่งให้ทำงานเมื่อมีคน Push เข้า branch 'prod'
+      
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out the code to build server
+        uses: actions/checkout@v4
+
+      # ขั้นตอนที่ 3.1: เปลี่ยนเจ้าของไฟล์บน Server เป็น ubuntu ก่อน (แก้ปัญหา Permission)
+      - name: set the ubuntu user as the owner
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PROD_HOST }}  # ใช้ IP เครื่อง Prod
+          username: ${{ secrets.SSH_USER_NAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo chown -R ubuntu /var/www/html
+
+      # ขั้นตอนที่ 3.2: Copy ไฟล์ขึ้น Server (เหมือนเดิม แต่เปลี่ยน Host)
+      - name: copy file to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}  # ใช้ IP เครื่อง Prod
+          username: ${{ secrets.SSH_USER_NAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./html/*"   # อย่าลืม! โฟลเดอร์ html ต้องตัวเล็ก
+          target: "/var/www/html"
+          strip_components: 1
+
+      # ขั้นตอนที่ 3.3: เปลี่ยนเจ้าของไฟล์กลับเป็น root (เพื่อความปลอดภัย)
+      - name: set the root user back as the owner
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PROD_HOST }}  # ใช้ IP เครื่อง Prod
+          username: ${{ secrets.SSH_USER_NAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo chown -R root /var/www/html
